@@ -93,6 +93,9 @@
     (when testing
       (find-file "/stage/tmp/clock.png"))))
 
+;; The temperature data is written to a file by curl from crontab.  We
+;; don't do network stuff from this process, because the wifi may be
+;; down, or the connection may hang.
 (defun round-clock--temp-from-file ()
   (if (not (file-exists-p "/mnt/tmpfs/data.json"))
       ""
