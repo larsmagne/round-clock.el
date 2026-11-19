@@ -14,6 +14,7 @@
     (svg-gradient svg "gradient" 'nope '((0 . "#000080") (100 . "black")))
     (svg-rectangle svg 0 0 dia dia :fill "black")
     (svg-circle svg rad rad rad  :gradient "gradient")
+    ;; Draw the minute markers.
     (dotimes (i 60)
       (svg-line svg 0 0 0 rad
 		:stroke-width "5px"
@@ -22,6 +23,7 @@
 				   rad rad
 				   (* i (/ 360 60)))))
     (svg-circle svg rad rad (- rad 10) :gradient "gradient")
+    ;; Draw the hour markers.
     (dotimes (i 60)
       (when (zerop (% i 5))
 	(svg-line svg 0 0 0 rad
@@ -31,6 +33,7 @@
 				     rad rad
 				     (* i (/ 360 60))))))
     (svg-circle svg rad rad (- rad 20) :gradient "gradient")
+    ;; Draw the minute hand.
     (svg-line svg 0 0 0 (+ (- rad) 60)
 	      :stroke-width "20px"
 	      :stroke fore
@@ -39,6 +42,7 @@
 				 rad rad
 				 (* (decoded-time-minute time)
 				    (/ 360 60))))
+    ;; Draw the hour hand.
     (svg-line svg 0 0 0 (+ (- rad) 150)
 	      :stroke-width "20px"
 	      :stroke fore
@@ -48,11 +52,13 @@
 				 (* (+ (decoded-time-hour time)
 				       (/ (decoded-time-minute time) 60.0))
 				    (/ 360 12))))
+    ;; Draw a square behind the date.
     (when nil
       (svg-rectangle svg (- dia 160) (- rad 40) 110 80
 		     :stroke-width "0px"
 		     :stroke fore
 		     :fill "grey"))
+    ;; Display the date.
     (svg-text svg (format "%s %d"
 			  (elt
 			   '("dim" "lun" "mar" "mer" "jeu" "ven" "sam")
@@ -67,6 +73,7 @@
 	      :text-anchor "end"
 	      :fill "grey"
 	      :font-family "futura")
+    ;; Display the temperature.
     (svg-text svg (round-clock--temp-from-file)
 	      :x 50
 	      :y (+ rad 20)
@@ -76,6 +83,7 @@
 	      :font-weight "bold"
 	      :fill "grey"
 	      :font-family "futura")
+    ;; Output to a file.
     (with-temp-buffer
       (svg-print svg)
       (call-process-region (point-min) (point-max) "rsvg-convert"
